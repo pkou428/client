@@ -126,7 +126,7 @@ public class TweenDeck extends JFrame{
 	}
 	public static void main(String args[]){
 		TweenDeck frame = new TweenDeck();
-		frame.setTitle("TW");
+		frame.setTitle("TW full cache");
 		frame.setSize(400,400);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
