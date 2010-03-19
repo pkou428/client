@@ -19,7 +19,7 @@ class UserData{
 	String userName;
 	String screenName;
 	HashMap<Long, String> tweetList;
-	WeakHashMap<Long, JPanel> panelList;
+	HashMap<Long, JPanel> panelList;
 	ImageIcon icon;
 
 	public UserData(Status status, ImageIcon icon){
@@ -27,7 +27,7 @@ class UserData{
 		this.screenName = user.getScreenName();
 		this.userName = user.getName();
 		this.tweetList = new HashMap<Long, String>();
-		this.panelList = new WeakHashMap<Long, JPanel>();
+		this.panelList = new HashMap<Long, JPanel>();
 		this.icon = icon;
 	}
 	public String getScreenName(){
