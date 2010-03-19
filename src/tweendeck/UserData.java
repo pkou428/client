@@ -40,6 +40,7 @@ class UserData{
 		return this.userName;
 	}
 	public void addTweet(long id, String tweet){
+		panelList.put(id, createTweetPanel(tweet));
 		tweetList.put(id, tweet);
 		
 	}
@@ -91,9 +92,9 @@ class UserData{
 //			}
 //			return panelList.get(id);
 //		}else{
-			if(!panelList.containsKey(id)){
-				panelList.put(id, createTweetPanel(tweetList.get(id)));
-			}
+//			if(!panelList.containsKey(id)){
+//				panelList.put(id, createTweetPanel(tweetList.get(id)));
+//			}
 			return panelList.get(id);
 //		}
 	}
