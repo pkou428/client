@@ -341,7 +341,7 @@ class StatusTimeLine{
 				remove.addActionListener(new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
 						JOptionPane.showMessageDialog(statusJList, "remove button clicked");
-//						deleteColumn(columnPanel);
+						deleteColumn(columnPanel);
 					}
 				});
 				menuPanel.add(remove);
@@ -558,11 +558,6 @@ class StatusTimeLine{
 		columnList.add(allFriends);
 		listList = new ArrayList<ListColumn>();
 		
-		listList.add(new ListColumn("pkou428",6698625,"com"));
-		listList.add(new ListColumn("pkou428",6671132,"dat"));
-		listList.add(new ListColumn("pkou428",1008214,"real"));
-		listList.add(new ListColumn("pkou428",6670396,"img"));
-		
 		for(int i = 0; i < listList.size(); i++){
 			columnList.add(listList.get(i));
 		}
@@ -593,7 +588,11 @@ class StatusTimeLine{
 	public JScrollPane getTimeLinePanel(){ //parentPanel‚ð•Ô‚·
 		return timeLineScrollPane;
 	}
-	private void deleteColumn(){
+	private void deleteColumn(JPanel comp){
+		//List‚©‚ç‚Ìremove‚à–Y‚ê‚¸‚É
+		comp.removeAll();
+		timeLinePanel.remove(comp);
+		timeLinePanel.repaint();
 	}
 }
 
