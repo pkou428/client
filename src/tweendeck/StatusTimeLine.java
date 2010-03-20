@@ -341,7 +341,7 @@ class StatusTimeLine{
 				remove.addActionListener(new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
 						JOptionPane.showMessageDialog(statusJList, "remove button clicked");
-						deleteColumn(columnPanel);
+						deleteThisColumn();
 					}
 				});
 				menuPanel.add(remove);
@@ -444,6 +444,9 @@ class StatusTimeLine{
 			catch (Exception ex){
 				ex.printStackTrace();
 			}
+		}
+		private void deleteThisColumn(){
+			deleteColumn(this);
 		}
 	}
 
@@ -588,10 +591,13 @@ class StatusTimeLine{
 	public JScrollPane getTimeLinePanel(){ //parentPanel‚ð•Ô‚·
 		return timeLineScrollPane;
 	}
-	private void deleteColumn(JPanel comp){
+	private void deleteColumn(ListColumn target){
 		//List‚©‚ç‚Ìremove‚à–Y‚ê‚¸‚É
-		comp.removeAll();
-		timeLinePanel.remove(comp);
+		System.out.println("before size : " + listList.size());
+		listList.remove(target);
+		System.out.println("after size : " + listList.size());
+		target.getColumnPanel().removeAll();
+		timeLinePanel.remove(target.getColumnPanel());
 		timeLinePanel.repaint();
 	}
 }
