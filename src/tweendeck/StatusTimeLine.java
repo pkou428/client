@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -34,6 +35,7 @@ import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.User;
+import twitter4j.UserList;
 
 class StatusTimeLine{
 
@@ -176,6 +178,14 @@ class StatusTimeLine{
 		 * タイムラインカラムの再表示
 		 * */
 		private void reloadTimeLine(){
+
+			JButton add = new JButton("add List");
+			add.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent ae){
+					AddList();
+				}
+			});
+			menuPanel.add(add);
 			try{
 				ResponseList<Status> statusList = twitter.getFriendsTimeline(new Paging(1, 100));
 				for(int i = 0; i < statusList.size(); i++){
@@ -340,7 +350,6 @@ class StatusTimeLine{
 				JButton remove = new JButton("remove List");
 				remove.addActionListener(new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
-						JOptionPane.showMessageDialog(statusJList, "remove button clicked");
 						deleteThisColumn();
 					}
 				});
@@ -598,7 +607,54 @@ class StatusTimeLine{
 		System.out.println("after size : " + listList.size());
 		target.getColumnPanel().removeAll();
 		timeLinePanel.remove(target.getColumnPanel());
-		timeLinePanel.repaint();
+		timeLinePanel.revalidate();
 	}
+	public void AddList(){
+		ArrayList<UserList> list = new ArrayList<UserList>();
+		PagableResponseList<UserList> tmp;
+		long cursor = -1;
+		do{
+			try{
+				tmp = twitter.getUserLists(twitter.getScreenName(), cursor);
+			}catch(Exception ex){
+				JOptionPane.showMessageDialog(null, "getUserList failed");
+				break;
+			}
+			list.addAll(tmp);
+			cursor = tmp.getNextCursor();
+		}while(cursor != 0);
+		System.out.println("list.size : " + list.size());
+		Object[] arry = list.toArray();
+		System.out.println("arry.length : " + arry.length);
+		String[] name = new String[arry.length];
+		for(int i = 0; i < arry.length; i++){
+			name[i] = new String(((UserList)arry[i]).getFullName());
+		}
+		for(int i = 0; i < arry.length; i++){
+			System.out.println(name[i]);
+		}
+		Object selectedItem = JOptionPane.showInputDialog(
+				allFriends.getColumnPanel() , "追加するリストを選択してください" , "adding ListColumn..." ,
+				JOptionPane.INFORMATION_MESSAGE , null , name , name[0]);
+		for(int i = 0; i < name.length; i++){
+			ListColumn tmpColumn = null;
+			if(name[i].equals(selectedItem)){
+				try{
+					tmpColumn = new ListColumn(twitter.getScreenName(),((UserList)arry[i]).getId(),((UserList)arry[i]).getFullName());
+				}catch(Exception ex){
+					ex.printStackTrace();
+				}
+				if(tmpColumn != null){
+				timeLinePanel.add(tmpColumn.getColumnPanel());
+				listList.add(tmpColumn);
+				tmpColumn.getColumnPanel().revalidate();
+				}
+			}
+		}
+
+		File iniFile = new File("./tweendeck.ini");
+
+	}
+	
 }
 

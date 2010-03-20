@@ -21,15 +21,33 @@ public class TweenDeck extends JFrame{
 		String loginPassword;
 		if(iniFile.exists()){
 			Properties prop = new Properties();
-			
+
 			try{
 				prop.load(new FileInputStream(iniFile));
 				loginName = prop.getProperty("name");
 				loginPassword = prop.getProperty("password");
-				System.out.println("from iniFile : " + loginName + loginPassword);
-				Thread.sleep(10000);
-				twitter = new Twitter(loginName,loginPassword);
-				twitter.verifyCredentials();
+				if(loginName != null && loginPassword != null){
+					System.out.println("from iniFile : " + loginName + loginPassword);
+					twitter = new Twitter(loginName,loginPassword);
+					twitter.verifyCredentials();
+				}else{
+					do{
+						System.out.println("ini file exists.but id or password doesn't exist");
+						loginForm = new LoginForm();
+
+						loginName = loginForm.getUserName();
+						loginPassword = loginForm.getPassword();
+						System.out.println("from loginform : " + loginName + loginPassword);
+						try{
+							twitter = new Twitter(loginName,loginPassword);
+							twitter.verifyCredentials();
+						}catch(Exception ex){
+							JOptionPane.showMessageDialog(null, "Login failed.");
+							continue;
+						}
+						break;
+					}while(true);
+				}
 			}catch(Exception ex){
 				JOptionPane.showMessageDialog(null, "Login failed. Ini File's something wrong.");
 				System.exit(-1);
@@ -132,13 +150,4 @@ public class TweenDeck extends JFrame{
 		frame.setVisible(true);
 	}
 }
-
-/*
- * タイムライン部
- * StatusTimeLine
- * 		∟TimeLineColumn//カラムを管理するクラス
- * 		|		∟reloadTimeLine() : TL更新？
- * 		∟getTimeLinePanel() : タイムライン用パネルを返す
- */
-
 
