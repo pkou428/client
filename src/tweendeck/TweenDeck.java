@@ -14,46 +14,65 @@ import javax.swing.*;
 public class TweenDeck extends JFrame{
 	Twitter twitter;
 	LoginForm loginForm;
-	
-	TweenDeck(){
+
+	public TweenDeck(){
 		File iniFile = new File("./tweendeck.ini");
 		String loginName;
 		String loginPassword;
-		if(iniFile.exists()){
-			Properties prop = new Properties();
+		Properties prop;
 
-			try{
-				prop.load(new FileInputStream(iniFile));
-				loginName = prop.getProperty("name");
-				loginPassword = prop.getProperty("password");
-				if(loginName != null && loginPassword != null){
-					System.out.println("from iniFile : " + loginName + loginPassword);
-					twitter = new Twitter(loginName,loginPassword);
-					twitter.verifyCredentials();
-				}else{
-					do{
-						System.out.println("ini file exists.but id or password doesn't exist");
-						loginForm = new LoginForm();
-
-						loginName = loginForm.getUserName();
-						loginPassword = loginForm.getPassword();
-						System.out.println("from loginform : " + loginName + loginPassword);
-						try{
-							twitter = new Twitter(loginName,loginPassword);
-							twitter.verifyCredentials();
-						}catch(Exception ex){
-							JOptionPane.showMessageDialog(null, "Login failed.");
-							continue;
-						}
-						break;
-					}while(true);
-				}
-			}catch(Exception ex){
-				JOptionPane.showMessageDialog(null, "Login failed. Ini File's something wrong.");
-				System.exit(-1);
+		try{
+			if(!iniFile.exists()){
+				if(!iniFile.createNewFile()){
+					JOptionPane.showMessageDialog(null, "Creating ini File failed");
+					System.out.println("exiting");
+					System.exit(-1);
+				}				
 			}
 
-		}else{
+			prop = new Properties();
+			prop.load(new FileInputStream(iniFile));
+			loginName = prop.getProperty("name");
+			loginPassword = prop.getProperty("password");
+			if(loginName != null && loginPassword != null){
+				twitter = new Twitter(loginName,loginPassword);
+				twitter.verifyCredentials();
+			}else{
+				do{
+					System.out.println("ini file exists.but id or password doesn't exist");
+					loginForm = new LoginForm();
+
+					loginName = loginForm.getUserName();
+					loginPassword = loginForm.getPassword();
+					System.out.println("from loginform : " + loginName + loginPassword);
+					try{
+						twitter = new Twitter(loginName,loginPassword);
+						twitter.verifyCredentials();
+					}catch(Exception ex){
+						JOptionPane.showMessageDialog(null, "Login failed.");
+						continue;
+					}
+					break;
+				}while(true);
+				if(loginForm.getCheckState()){
+					BufferedWriter configWriter;
+					try{
+							configWriter = new BufferedWriter(new FileWriter(iniFile));
+							configWriter.write("name=" + loginForm.getUserName() + "\n");
+							configWriter.newLine();
+							configWriter.write("password=" + loginForm.getPassword());
+							configWriter.close();
+					}catch(Exception ex){
+						ex.printStackTrace();
+					}
+				}
+			}
+		}catch(Exception ex){
+			JOptionPane.showMessageDialog(null, "Login failed. Ini File's something wrong.");
+			System.exit(-1);
+		}
+		/*
+		else{
 			do{
 				loginForm = new LoginForm();
 
@@ -86,14 +105,8 @@ public class TweenDeck extends JFrame{
 				}catch(Exception ex){
 					ex.printStackTrace();
 				}
-				/*
-				if(iniFile.exists()){
-					System.out.println("file exists");
-				}
-				third
-				*/
 			}
-		}
+		}*/
 		JPanel p = new JPanel();
 		SpringLayout layout = new SpringLayout();
 		p.setLayout(layout);
@@ -101,16 +114,16 @@ public class TweenDeck extends JFrame{
 		IconList iconList = new IconList();
 		HashMap<String, UserData> userList = new HashMap<String, UserData>();
 		TweetDetail	tweetDetail = new TweetDetail(iconList, userList);
-		
+
 		/*
 		tweetForm.setMinimumSize(new Dimension(tweetForm.getMinimumSize().width,40));
 		tweetForm.setMaximumSize(new Dimension(tweetForm.getMaximumSize().width,40));
 		tweetForm.setPreferredSize(new Dimension(400,40));
-		*/
-		
+		 */
+
 		StatusTimeLine tl = new StatusTimeLine(twitter, tweetForm, tweetDetail, iconList, userList);
 		tweetForm.setStatusTimeLine(tl);
-		
+
 		/*
 		 * タイムラインパネルのレイアウト
 		 * */
@@ -118,7 +131,7 @@ public class TweenDeck extends JFrame{
 		layout.putConstraint(SpringLayout.WEST, tl.getTimeLinePanel(), 5, SpringLayout.WEST, p);
 		layout.putConstraint(SpringLayout.EAST, tl.getTimeLinePanel(), -5, SpringLayout.EAST, p);
 		layout.putConstraint(SpringLayout.SOUTH, tl.getTimeLinePanel(), -90, SpringLayout.SOUTH, p);
-		
+
 		/*
 		 * ツイート表示パネルのレイアウト
 		 * */
@@ -126,7 +139,7 @@ public class TweenDeck extends JFrame{
 		layout.putConstraint(SpringLayout.WEST, tweetDetail.getTweetDetailPanel(), 5, SpringLayout.WEST, p);
 		layout.putConstraint(SpringLayout.EAST, tweetDetail.getTweetDetailPanel(), -5, SpringLayout.EAST, p);
 		layout.putConstraint(SpringLayout.SOUTH, tweetDetail.getTweetDetailPanel(), -40, SpringLayout.SOUTH, p);
-		
+
 		/*
 		 * ツイート投稿フォームのレイアウト
 		 * */
@@ -138,9 +151,9 @@ public class TweenDeck extends JFrame{
 		p.add(tweetForm.getTweetFormPanel());
 		p.add(tweetDetail.getTweetDetailPanel());
 		this.getContentPane().add(p);
-//		  JProgressBar progressBar = new JProgressBar(0, 100);
-//		JOptionPane.showMessageDialog(null, progressBar	);
-		
+		//		  JProgressBar progressBar = new JProgressBar(0, 100);
+		//		JOptionPane.showMessageDialog(null, progressBar	);
+
 	}
 	public static void main(String args[]){
 		TweenDeck frame = new TweenDeck();

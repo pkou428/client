@@ -10,9 +10,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Properties;
 
 import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
@@ -69,7 +71,7 @@ class StatusTimeLine{
 			statusJList.setCellRenderer(new TimeLineCellRenderer(iconList));
 			menuPanel = new JPanel();
 			menuPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-		    popup = new JPopupMenu();
+			popup = new JPopupMenu();
 			popup.add(new ActionRetweet("Retweet"));
 			popup.add(new ActionReply("Reply"));
 			//マウスリスナへ登録
@@ -83,14 +85,14 @@ class StatusTimeLine{
 							statusJList.setSelectedIndex(index);
 							selectedItem = (ListEntry)listModel.get(statusJList.getSelectedIndex());
 							tweetDetail.setDetail(selectedItem);
-//							JOptionPane.showMessageDialog(statusJList, "right clicked");
-//							tweetForm.addString("@" + selectedItem.getUser().getScreenName());
+							//							JOptionPane.showMessageDialog(statusJList, "right clicked");
+							//							tweetForm.addString("@" + selectedItem.getUser().getScreenName());
 							showPopup(me, statusJList);
 						}
 					}else if(SwingUtilities.isLeftMouseButton(me)){
 						selectedItem = (ListEntry)listModel.get(statusJList.getSelectedIndex());
 						tweetDetail.setDetail(selectedItem);
-//						JOptionPane.showMessageDialog(statusJList, "left clicked");
+						//						JOptionPane.showMessageDialog(statusJList, "left clicked");
 					}
 				}
 			};
@@ -116,7 +118,7 @@ class StatusTimeLine{
 			columnPanel.add(titleLabel);
 			columnPanel.add(menuPanel);
 		}
-		
+
 		private void showPopup(MouseEvent me, JList list){
 			if(me.isPopupTrigger()){
 				popup.show(list, me.getX(), me.getY());
@@ -162,8 +164,8 @@ class StatusTimeLine{
 			return columnPanel;
 		}
 		public final void startUpdate(){
-			
-			
+
+
 			TimerThread timer = new TimerThread();
 			reloadTimeLine();
 			timer.start();
@@ -209,7 +211,7 @@ class StatusTimeLine{
 				ex.printStackTrace();
 			}
 		}
-		
+
 		/*
 		 * タイムラインの更新
 		 * 自動更新用スレッドと外部からの２つからアクセスされる可能性がアル
@@ -268,7 +270,7 @@ class StatusTimeLine{
 						listModel.add(0,new ListEntry(tmp, tmpId));
 					}
 					System.out.println("1.5");
-					
+
 					latestStatusId = statusList.get(0).getId();
 					UpdateTimeLineThread thread = new UpdateTimeLineThread(statusList);
 					thread.start();
@@ -332,7 +334,7 @@ class StatusTimeLine{
 		String listOwnerName;
 		HashMap<String, Integer> listMap;
 		int listId;
-		
+
 		public ListColumn(String listOwnerName, int listId, String title){
 			super(title);
 			try{
@@ -388,7 +390,7 @@ class StatusTimeLine{
 				layout.putConstraint(SpringLayout.EAST, scrollPane, 0, SpringLayout.EAST, columnPanel);
 				layout.putConstraint(SpringLayout.SOUTH, scrollPane,0, SpringLayout.SOUTH, columnPanel);
 				columnPanel.add(scrollPane);
-				*/
+				 */
 				reloadTimeLine();
 			}
 			catch(Exception ex){
@@ -407,7 +409,7 @@ class StatusTimeLine{
 						tmp = new UserData(timeLineList.get(i), iconList.getImageIcon(timeLineList.get(i).getUser()));
 						userList.put(tmpName, tmp);
 					}else{
-//						System.out.println(tmpName + "'s Data already exists");
+						//						System.out.println(tmpName + "'s Data already exists");
 						tmp = userList.get(tmpName);
 					}
 					long tmpId = timeLineList.get(i).getId();
@@ -488,21 +490,21 @@ class StatusTimeLine{
 			JLabel tmpIcon = new JLabel();
 			UserData tmpUserData = tmpEntry.getUserData();
 			tmpIcon.setIcon(tmpUserData.getIcon());
-			
+
 //			tmpIcon.setMaximumSize(new Dimension(50,50));
 //			tmpIcon.setMinimumSize(new Dimension(50,50));
 //			tmpIcon.setSize(new Dimension(50,50));
-			
+
 			tmp = new JTextArea(tmpUserData.getUserName() + " >\n" + tmpUserData.getTweetText(tmpEntry.getTweetId()));
 //			tmp.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
 			tmp.setLineWrap(true);
 //			tmp.setPreferredSize(new Dimension(200,50));
 			tmp.setRows(3);
-			*/
-//			System.out.print("Rendering List \"" + list.hashCode() + "\"  ");
+			 */
+			//			System.out.print("Rendering List \"" + list.hashCode() + "\"  ");
 			ListEntry tmpEntry = (ListEntry)value;
 			JPanel tmp = tmpEntry.getUserData().getTweetPanel(tmpEntry.getTweetId());
-			
+
 			if(isSelected){
 				tmp.getComponent(0).setBackground(list.getSelectionBackground());
 
@@ -515,7 +517,7 @@ class StatusTimeLine{
 			tmp.setPreferredSize(new Dimension(220,40));
 			tmpPanel.add(tmp);
 			tmpPanel.add(tmpIcon);
-			*/
+			 */
 			/*
 			SpringLayout layout = new SpringLayout();
 			tmpPanel.setLayout(layout);
@@ -523,20 +525,20 @@ class StatusTimeLine{
 			layout.putConstraint(SpringLayout.WEST, tmpIcon, 5, SpringLayout.WEST, tmpPanel);
 			layout.putConstraint(SpringLayout.EAST, tmpIcon, -5, SpringLayout.EAST, tmpPanel);
 			layout.putConstraint(SpringLayout.SOUTH, tmpIcon,-5, SpringLayout.SOUTH, tmpPanel);
-			
+
 			layout.putConstraint(SpringLayout.NORTH, tmpIcon, 5, SpringLayout.NORTH, tmpPanel);
 			layout.putConstraint(SpringLayout.WEST, tmpIcon, 5, SpringLayout.WEST, tmpPanel);
 			layout.putConstraint(SpringLayout.EAST, tmpIcon, -5, SpringLayout.WEST, tmp);
 			layout.putConstraint(SpringLayout.SOUTH, tmpIcon,-5, SpringLayout.SOUTH, tmpPanel);
 			tmpPanel.add(tmp);
 			tmpPanel.add(tmpIcon);
-			*/
+			 */
 			return tmp;
 		}
 
 	}
 
-	
+
 	JScrollPane timeLineScrollPane;
 	ArrayList<TimeLineColumn> columnList;
 	JPanel timeLinePanel;//TL表示用
@@ -569,18 +571,18 @@ class StatusTimeLine{
 		allFriends.startUpdate();
 		columnList.add(allFriends);
 		listList = new ArrayList<ListColumn>();
-		
+
 		for(int i = 0; i < listList.size(); i++){
 			columnList.add(listList.get(i));
 		}
-		
+
 		BoxLayout timeLineLayout = new BoxLayout(timeLinePanel, BoxLayout.X_AXIS);
 		timeLinePanel.setLayout(timeLineLayout);
-		
+
 		/*
 		layout = new FlowLayout();
 		timeLinePanel.setLayout(layout);
-		*/
+		 */
 		Iterator<TimeLineColumn> ite = columnList.iterator();
 		while(ite.hasNext()){
 			TimeLineColumn tmp = ite.next();
@@ -645,16 +647,29 @@ class StatusTimeLine{
 					ex.printStackTrace();
 				}
 				if(tmpColumn != null){
-				timeLinePanel.add(tmpColumn.getColumnPanel());
-				listList.add(tmpColumn);
-				tmpColumn.getColumnPanel().revalidate();
+					timeLinePanel.add(tmpColumn.getColumnPanel());
+					listList.add(tmpColumn);
+					tmpColumn.getColumnPanel().revalidate();
+
+					File iniFile = new File("./tweendeck.ini");
+					Properties prop = null;
+					try{
+						if(!iniFile.exists()){
+							iniFile.createNewFile();
+						}
+						prop = new Properties();
+						prop.load(new FileInputStream(iniFile));
+					}catch(Exception ex){
+						ex.printStackTrace();
+					}
+					if(prop != null){
+						prop.setProperty("list", prop.getProperty("list")+ ((UserList)arry[i]).getId() + "," + ((UserList)arry[i]).getFullName() + ";");
+					}
 				}
+				break;
 			}
 		}
-
-		File iniFile = new File("./tweendeck.ini");
-
 	}
-	
+
 }
 
